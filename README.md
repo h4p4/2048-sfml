@@ -28,11 +28,10 @@ Help me.
 
 ## Authors
 
-Albert Zakourtsev  
-[@ab1et](https://vk.com/ab1let)
+[Albert Zakourtsev](https://vk.com/ab1let)
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE.md file for details
+This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/h4p4/2048-sfml/blob/master/LICENSE) file for details
 
 

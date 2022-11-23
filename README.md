@@ -1,9 +1,9 @@
 # 2048-sfml
-If you can build it you're a god.
+Simple recreation of [2048 game](https://play2048.co/)
 
 ## Description
 
-Simple recreation of [2048 game](https://play2048.co/)
+If you can build it you're a god.
 
 ### Dependencies
 

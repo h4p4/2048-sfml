@@ -1,5 +1,5 @@
 # 2048-sfml
-Simple recreation of [2048 game](https://play2048.co/)
+Simple clone of [2048 game](https://play2048.co/) game written in C++ and SFML library 
 
 ## Description
 

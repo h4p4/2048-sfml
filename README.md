@@ -8,7 +8,7 @@ If you can build it you're a god.
 ### Dependencies
 
 * SFML dlls
-* [GCC 7.3.0 MinGW (SEH) - 64-bit](https://www.sfml-dev.org/download/sfml/2.5.1/)
+* [GCC 7.3.0 MinGW (SEH) - 64-bit](https://www.sfml-dev.org/files/SFML-2.5.1-windows-gcc-7.3.0-mingw-64-bit.zip)
 * Windows 10
 
 ## Getting Started

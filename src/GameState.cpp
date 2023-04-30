@@ -24,7 +24,7 @@ void GameState::generateRandomPlacedTile()
     findEmptyTiles();
     std::random_device dev;
     std::mt19937 rng(dev());
-    std::uniform_int_distribution<std::mt19937::result_type> dist(0, pEmptyTiles.size() - 1); 
+    std::uniform_int_distribution<std::mt19937::result_type> dist(0, pEmptyTiles.size() - 1);
     Tile *pTile = pEmptyTiles.at(dist(rng));
     pTile->setFillColor(sf::Color(238, 228, 218));
     pTile->setInsideNumber(2);
@@ -39,11 +39,12 @@ void GameState::drawTile(Tile &rTile)
 
 void GameState::moveAllTilesLeft()
 {
-    for (size_t prevCol = 1; prevCol != gridSize; prevCol++)
+    for (size_t y = 0; y < gridSize; y++)
     {
-        for (size_t col = 0; col != gridSize - 1; col++)
+        bool wereMerged = false;
+        for (size_t prevCol = 1; prevCol != gridSize; prevCol++)
         {
-            for (size_t y = 0; y < gridSize; y++)
+            for (size_t col = 0; col != gridSize - 1; col++)
             {
                 if (tiles[prevCol][y].getFillColor() != emptyTileColor && tiles[col][y].getFillColor() == emptyTileColor)
                 {
@@ -54,12 +55,14 @@ void GameState::moveAllTilesLeft()
 
                 if (col != std::numeric_limits<size_t>::max() &&
                     *tiles[col + 1][y].getInsideNumber() == *tiles[col][y].getInsideNumber() &&
-                    *tiles[col + 1][y].getInsideNumber() != 0)
+                    *tiles[col + 1][y].getInsideNumber() != 0 &&
+                    !wereMerged)
                 {
                     tiles[col + 1][y].replace(tiles[col][y].getPosition().x, tiles[col][y].getPosition().y);
                     tiles[col][y] = *(new Tile(tiles[col + 1][y]));
                     tiles[col][y].doubleTheNum();
                     tiles[col + 1][y] = *(new Tile(200 * (col + 1) + 50, 200 * y + 50, 0, emptyTileColor));
+                    wereMerged = true;
                 }
             }
         }
@@ -68,11 +71,12 @@ void GameState::moveAllTilesLeft()
 
 void GameState::moveAllTilesRight()
 {
-    for (size_t prevCol = gridSize - 2; prevCol != std::numeric_limits<size_t>::max(); prevCol--)
+    for (size_t y = 0; y < gridSize; y++)
     {
-        for (size_t col = gridSize - 1; col > 0; col--)
+        bool wereMerged = false;
+        for (size_t prevCol = gridSize - 2; prevCol != std::numeric_limits<size_t>::max(); prevCol--)
         {
-            for (size_t y = 0; y < gridSize; y++)
+            for (size_t col = gridSize - 1; col > 0; col--)
             {
                 if (tiles[prevCol][y].getFillColor() != emptyTileColor && tiles[col][y].getFillColor() == emptyTileColor)
                 {
@@ -85,12 +89,14 @@ void GameState::moveAllTilesRight()
 
                 if (col < gridSize &&
                     *tiles[col - 1][y].getInsideNumber() == *tiles[col][y].getInsideNumber() &&
-                    *tiles[col - 1][y].getInsideNumber() != 0)
+                    *tiles[col - 1][y].getInsideNumber() != 0 && // если обе клетки равны и обе не ноль (не пустая)
+                    !wereMerged)
                 {
                     tiles[col - 1][y].replace(tiles[col][y].getPosition().x, tiles[col][y].getPosition().y);
                     tiles[col][y] = *(new Tile(tiles[col - 1][y]));
                     tiles[col][y].doubleTheNum();
                     tiles[col - 1][y] = *(new Tile(200 * (col - 1) + 50, 200 * y + 50, 0, emptyTileColor));
+                    wereMerged = true;
                 }
             }
         }
@@ -99,11 +105,12 @@ void GameState::moveAllTilesRight()
 
 void GameState::moveAllTilesUp()
 {
-    for (size_t prevCol = 1; prevCol != gridSize; prevCol++)
+    for (size_t y = 0; y < gridSize; y++)
     {
-        for (size_t col = 0; col !=  gridSize - 1; col++)
+        bool wereMerged = false;
+        for (size_t prevCol = 1; prevCol != gridSize; prevCol++)
         {
-            for (size_t y = 0; y < gridSize; y++)
+            for (size_t col = 0; col != gridSize - 1; col++)
             {
                 if (tiles[y][prevCol].getFillColor() != emptyTileColor && tiles[y][col].getFillColor() == emptyTileColor)
                 {
@@ -113,12 +120,14 @@ void GameState::moveAllTilesUp()
                 }
                 if (col != std::numeric_limits<size_t>::max() &&
                     *tiles[y][col + 1].getInsideNumber() == *tiles[y][col].getInsideNumber() &&
-                    *tiles[y][col + 1].getInsideNumber() != 0)
+                    *tiles[y][col + 1].getInsideNumber() != 0 &&
+                    !wereMerged)
                 {
                     tiles[y][col + 1].replace(tiles[y][col].getPosition().x, tiles[y][col].getPosition().y);
                     tiles[y][col] = *(new Tile(tiles[y][col + 1]));
                     tiles[y][col].doubleTheNum();
                     tiles[y][col + 1] = *(new Tile(200 * y + 50, 200 * (col + 1) + 50, 0, emptyTileColor));
+                    wereMerged = true;
                 }
             }
         }
@@ -127,11 +136,12 @@ void GameState::moveAllTilesUp()
 
 void GameState::moveAllTilesDown()
 {
-    for (size_t prevCol = gridSize - 2; prevCol != std::numeric_limits<size_t>::max(); prevCol--)
+    for (size_t y = 0; y < gridSize; y++)
     {
-        for (size_t col = gridSize - 1; col > 0; col--)
+        bool wereMerged = false;
+        for (size_t prevCol = gridSize - 2; prevCol != std::numeric_limits<size_t>::max(); prevCol--)
         {
-            for (size_t y = 0; y < gridSize; y++)
+            for (size_t col = gridSize - 1; col > 0; col--)
             {
                 if (tiles[y][prevCol].getFillColor() != emptyTileColor && tiles[y][col].getFillColor() == emptyTileColor)
                 {
@@ -141,12 +151,14 @@ void GameState::moveAllTilesDown()
                 }
                 if (col < gridSize &&
                     *tiles[y][col - 1].getInsideNumber() == *tiles[y][col].getInsideNumber() &&
-                    *tiles[y][col - 1].getInsideNumber() != 0)
-                { 
+                    *tiles[y][col - 1].getInsideNumber() != 0 &&
+                    !wereMerged)
+                {
                     tiles[y][col - 1].replace(tiles[y][col].getPosition().x, tiles[y][col].getPosition().y);
                     tiles[y][col] = *(new Tile(tiles[y][col - 1]));
                     tiles[y][col].doubleTheNum();
                     tiles[y][col - 1] = *(new Tile(200 * y + 50, 200 * (col - 1) + 50, 0, emptyTileColor));
+                    wereMerged = true;
                 }
             }
         }
@@ -192,7 +204,6 @@ void GameState::clear()
     backgroundTiles.clear();
 }
 
-
 void GameState::updateEvents(sf::Event &rEvent)
 {
     if (rEvent.type == sf::Event::EventType::KeyPressed)
@@ -214,7 +225,7 @@ void GameState::updateEvents(sf::Event &rEvent)
                 moveAllTilesUp();
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
                 moveAllTilesDown();
-            
+
             generateRandomPlacedTile();
         }
     }

@@ -37,77 +37,50 @@ void GameState::drawTile(Tile &rTile)
         window.draw(*(rTile.getInsideNumberText()));
 }
 
-void GameState::moveAllTilesLeft()
+void GameState::moveAllTiles(MoveDirection direction)
 {
     for (size_t y = 0; y < gridSize; y++)
     {
         bool wereMerged = false;
-        for (size_t prevCol = 1; prevCol != gridSize; prevCol++)
-        {
-            for (size_t col = 0; col != gridSize - 1; col++)
-            {
-                trySwapTiles(&tiles[prevCol][y], &tiles[col][y], prevCol, y);
-                if (!wereMerged && tryMergeTiles(&tiles[col + 1][y], &tiles[col][y], (col + 1), y, col != std::numeric_limits<size_t>::max()))
-                    wereMerged = true;
-            }
-        }
-    }
-}
-
-void GameState::moveAllTilesRight()
-{
-    for (size_t y = 0; y < gridSize; y++)
-    {
-        bool wereMerged = false;
-        for (size_t prevCol = gridSize - 2; prevCol != std::numeric_limits<size_t>::max(); prevCol--)
-        {
-            for (size_t col = gridSize - 1; col > 0; col--)
-            {
-                trySwapTiles(&tiles[prevCol][y], &tiles[col][y], prevCol, y);
-                if (!wereMerged && tryMergeTiles(&tiles[col - 1][y], &tiles[col][y], (col - 1), y, col < gridSize))
-                    wereMerged = true;
-            }
-        }
-    }
-}
-
-void GameState::moveAllTilesUp()
-{
-    for (size_t y = 0; y < gridSize; y++)
-    {
-        bool wereMerged = false;
-        for (size_t prevCol = 1; prevCol != gridSize; prevCol++)
-        {
-            for (size_t col = 0; col != gridSize - 1; col++)
-            {
-                trySwapTiles(&tiles[y][prevCol], &tiles[y][col], y, prevCol);
-                if (!wereMerged && tryMergeTiles(&tiles[y][col + 1], &tiles[y][col], y, (col + 1), col != std::numeric_limits<size_t>::max()))
-                    wereMerged = true;
-            }
-        }
-    }
-}
-
-void GameState::moveAllTilesDown()
-{
-    for (size_t y = 0; y < gridSize; y++)
-    {
-        bool wereMerged = false;
-        for (size_t prevCol = gridSize - 2; prevCol != std::numeric_limits<size_t>::max(); prevCol--)
-        {
-            for (size_t col = gridSize - 1; col > 0; col--)
-            {
-                trySwapTiles(&tiles[y][prevCol], &tiles[y][col], y, prevCol);
-                if (!wereMerged && tryMergeTiles(&tiles[y][col - 1], &tiles[y][col], y, (col - 1), col < gridSize))
-                    wereMerged = true;
-            }
-        }
+        if (direction == MoveDirection::Left || direction == MoveDirection::Up)
+            for (size_t prevCol = 1; prevCol != gridSize; prevCol++)
+                for (size_t col = 0; col != gridSize - 1; col++)
+                {
+                    if (direction == MoveDirection::Left)
+                    {
+                        trySwapTiles(&tiles[prevCol][y], &tiles[col][y], prevCol, y);
+                        if (!wereMerged && tryMergeTiles(&tiles[col + 1][y], &tiles[col][y], (col + 1), y, col != std::numeric_limits<size_t>::max()))
+                            wereMerged = true;
+                        continue;
+                    }
+                    // UP
+                    trySwapTiles(&tiles[y][prevCol], &tiles[y][col], y, prevCol);
+                    if (!wereMerged && tryMergeTiles(&tiles[y][col + 1], &tiles[y][col], y, (col + 1), col != std::numeric_limits<size_t>::max()))
+                        wereMerged = true;
+                }
+        if (direction == MoveDirection::Right || direction == MoveDirection::Down)
+            for (size_t prevCol = gridSize - 2; prevCol != std::numeric_limits<size_t>::max(); prevCol--)
+                for (size_t col = gridSize - 1; col > 0; col--)
+                {
+                    if (direction == MoveDirection::Right)
+                    {
+                        trySwapTiles(&tiles[prevCol][y], &tiles[col][y], prevCol, y);
+                        if (!wereMerged && tryMergeTiles(&tiles[col - 1][y], &tiles[col][y], (col - 1), y, col < gridSize))
+                            wereMerged = true;
+                        continue;
+                    }
+                    // DOWN
+                    trySwapTiles(&tiles[y][prevCol], &tiles[y][col], y, prevCol);
+                    if (!wereMerged && tryMergeTiles(&tiles[y][col - 1], &tiles[y][col], y, (col - 1), col < gridSize))
+                        wereMerged = true;
+                }
     }
 }
 
 bool GameState::trySwapTiles(Tile *firstTile, Tile *secondTile, size_t col, size_t y)
 {
-    if (!((*firstTile).getFillColor() != emptyTileColor && (*secondTile).getFillColor() == emptyTileColor)) return false;
+    if (!((*firstTile).getFillColor() != emptyTileColor && (*secondTile).getFillColor() == emptyTileColor))
+        return false;
     (*firstTile).replace((*secondTile).getPosition().x, (*secondTile).getPosition().y);
     *secondTile = *(new Tile(*firstTile));
     *firstTile = *(new Tile(200 * col + 50, 200 * y + 50, 0, emptyTileColor));
@@ -117,7 +90,8 @@ bool GameState::trySwapTiles(Tile *firstTile, Tile *secondTile, size_t col, size
 bool GameState::tryMergeTiles(Tile *firstTile, Tile *secondTile, size_t col, size_t y, bool condition)
 {
     if (!(condition && *(*firstTile).getInsideNumber() == *(*secondTile).getInsideNumber() &&
-        *(*firstTile).getInsideNumber() != 0)) return false;
+          *(*firstTile).getInsideNumber() != 0))
+        return false;
     (*firstTile).replace((*secondTile).getPosition().x, (*secondTile).getPosition().y);
     *secondTile = *(new Tile(*firstTile));
     (*secondTile).doubleTheNum();
@@ -152,13 +126,6 @@ void GameState::clear()
         tiles[i].clear();
         backgroundTiles[i].clear();
     }
-    // for (size_t i = 0; i < pEmptyTiles.size(); i++)
-    //     delete pEmptyTiles[i];
-
-    // Т.к. pEmptyTils это массив указателей на элементы из tiles,
-    // то чистить нам сами элементы не нужно, т.к. тогда
-    // это произойдет повторно
-
     pEmptyTiles.clear();
     tiles.clear();
     backgroundTiles.clear();
@@ -178,14 +145,13 @@ void GameState::updateEvents(sf::Event &rEvent)
             sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
         {
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-                moveAllTilesRight();
+                moveAllTiles(MoveDirection::Right);
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-                moveAllTilesLeft();
+                moveAllTiles(MoveDirection::Left);
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-                moveAllTilesUp();
+                moveAllTiles(MoveDirection::Up);
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-                moveAllTilesDown();
-
+                moveAllTiles(MoveDirection::Down);
             generateRandomPlacedTile();
         }
     }

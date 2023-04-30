@@ -15,12 +15,6 @@ private:
 
     void generateRandomPlacedTile();
     void drawTile(Tile &rTile);
-
-    void moveAllTilesRight();
-    void moveAllTilesLeft();
-    void moveAllTilesUp();
-    void moveAllTilesDown();
-
     void moveAllTiles(MoveDirection direction);
     bool tryMergeTiles(Tile* firstTile, Tile* secondTile, size_t col, size_t y, bool condition);
     bool trySwapTiles(Tile* firstTile, Tile* secondTile, size_t col, size_t y);

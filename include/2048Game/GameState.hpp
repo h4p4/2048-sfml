@@ -1,7 +1,7 @@
 #pragma once
 #include <2048Game/StateBase.hpp>
 #include <2048Game/Tile.hpp>
-
+#include <2048Game/MoveDirection.hpp>
 
 class GameState : public StateBase 
 {
@@ -20,6 +20,11 @@ private:
     void moveAllTilesLeft();
     void moveAllTilesUp();
     void moveAllTilesDown();
+
+    void moveAllTiles(MoveDirection direction);
+    bool tryMergeTiles(Tile* firstTile, Tile* secondTile, size_t col, size_t y, bool condition);
+    bool trySwapTiles(Tile* firstTile, Tile* secondTile, size_t col, size_t y);
+
 
     void findEmptyTiles();
 public:
